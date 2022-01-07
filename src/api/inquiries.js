@@ -1,7 +1,9 @@
-// eslint-disable-next-line import/prefer-default-export
-export const getInquiries = async (propertyId, page = 0) => {
-  const response = await fetch(
-    `http://localhost:3007/inquiries?propertyId=${propertyId}&_page=${page}&_limit=3&_sort=id&_order=asc`
-  );
-  return response;
+let limit = 0;
+export const getInquiries = async (propertyId) => {
+  limit = limit >= 299 ? 3 : limit + Math.floor(Math.random() * 4);
+  return (
+    await fetch(
+      `http://localhost:3007/inquiries?propertyId=${propertyId}&_limit=${limit}&_sort=id&_order=asc`
+    )
+  ).json();
 };

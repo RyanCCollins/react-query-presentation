@@ -2,6 +2,7 @@
     "plugins": ["react", "prettier"],
     "extends": ["react-app", "airbnb", "prettier"],
     "rules": {
+      "import/prefer-default-export": "off",
       "prettier/prettier": [
         "error",
         {

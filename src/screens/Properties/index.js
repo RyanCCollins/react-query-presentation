@@ -1,7 +1,5 @@
-import React, { useEffect, useContext } from 'react';
-import { PropTypes } from 'prop-types';
+import React from 'react';
 import { navigate } from '@reach/router';
-import { connect } from 'react-redux';
 import {
   Box,
   Spinner,
@@ -12,32 +10,15 @@ import {
   CardHeader,
   CardFooter,
   Grid,
-  ResponsiveContext,
 } from 'grommet';
 import { Map, StatusInfo, Favorite, Link as LinkIcon } from 'grommet-icons';
-import { loadProperties } from '../../actions';
 import { Error } from '../../components';
-import {
-  selectProperties,
-  selectPropertiesCount,
-  selectPropertiesError,
-  selectPropertiesLoading,
-} from '../../selectors';
+import { useLoadPropertiesQuery } from './queries';
+import { useColumnCount } from './hooks';
 
-function Properties({ properties, count, error, isLoading, fetchProperties }) {
-  const size = useContext(ResponsiveContext);
-  const columnCount =
-    {
-      small: 1,
-      medium: 2,
-      large: 3,
-    }[size] || 3;
-
-  useEffect(() => {
-    if (!properties.length) {
-      fetchProperties();
-    }
-  }, [properties, fetchProperties]);
+function Properties() {
+  const columnCount = useColumnCount();
+  const { data: properties, isLoading, error } = useLoadPropertiesQuery();
 
   if (error) {
     return <Error message={error.message} />;
@@ -56,7 +37,7 @@ function Properties({ properties, count, error, isLoading, fetchProperties }) {
     <Box>
       <Box direction="row" justify="between" align="center">
         <Heading>Properties for Sale</Heading>
-        <Text>{count} total</Text>
+        <Text>{properties.length} total</Text>
       </Box>
       <Grid
         pad="small"
@@ -112,27 +93,4 @@ function Properties({ properties, count, error, isLoading, fetchProperties }) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  properties: selectProperties(state),
-  count: selectPropertiesCount(state),
-  error: selectPropertiesError(state),
-  isLoading: selectPropertiesLoading(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  fetchProperties: () => dispatch(loadProperties()),
-});
-
-Properties.propTypes = {
-  properties: PropTypes.arrayOf(PropTypes.object).isRequired,
-  fetchProperties: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  error: PropTypes.shape({ message: PropTypes.string.isRequired }),
-  count: PropTypes.number.isRequired,
-};
-
-Properties.defaultProps = {
-  error: undefined,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Properties);
+export default Properties;

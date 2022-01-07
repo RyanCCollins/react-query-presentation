@@ -1,38 +1,34 @@
-import React, { useEffect } from 'react';
-import { PropTypes } from 'prop-types';
-
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Box, Heading, Text, Anchor, Spinner, DataTable } from 'grommet';
 import { LinkPrevious } from 'grommet-icons';
 import { navigate } from '@reach/router';
 import { Error } from '../../components';
-import { POLL, POLL_INTERVAL } from '../../constants';
+import { useLoadInquiriesQuery, useLoadPropertyQuery } from './queries';
 
-function Property({
-  property,
-  inquiries,
-  loadInquiries,
-  clearInquiries,
-  count,
-  error,
-  isLoading,
-  isUpdating,
-}) {
-  useEffect(() => {
-    loadInquiries();
-    let interval;
-    if (POLL) {
-      interval = setInterval(() => {
-        loadInquiries();
-      }, POLL_INTERVAL);
-    }
-    return () => {
-      clearInterval(interval);
-      clearInquiries();
-    };
-  }, [loadInquiries, clearInquiries]);
+function Property({ propertyId }) {
+  const {
+    data: inquiries,
+    isLoading: isLoadingInquiries,
+    error: errorInquiry,
+  } = useLoadInquiriesQuery(propertyId);
+  const {
+    data: property,
+    isLoading: isLoadingProperty,
+    error: errorProperty,
+  } = useLoadPropertyQuery(propertyId);
 
-  if (error) {
-    return <Error message={error.message} />;
+  if (errorInquiry || errorProperty) {
+    return <Error message={errorInquiry || errorProperty} />;
+  }
+
+  if (isLoadingProperty) {
+    return (
+      <Box pad="large" fill align="center" justify="center">
+        <Spinner size="large" />
+        <Text>Loading...</Text>
+      </Box>
+    );
   }
 
   return (
@@ -55,11 +51,11 @@ function Property({
           <Box direction="row" gap="small" align="center" justify="between">
             <Box direction="row" gap="small" align="center">
               <Heading>Inquiries</Heading>
-              {isUpdating && <Spinner />}
+              {isLoadingInquiries && <Spinner />}
             </Box>
-            {count > 0 && <Text>Total Inquiries: {count}</Text>}
+            {/* {count > 0 && <Text>Total Inquiries: {count}</Text>} */}
           </Box>
-          {isLoading ? (
+          {isLoadingInquiries ? (
             <Box pad="medium" fill align="center" justify="center">
               <Spinner size="medium" />
               <Text>Loading...</Text>
@@ -95,20 +91,7 @@ function Property({
 }
 
 Property.propTypes = {
-  property: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    status: PropTypes.oneOf(['pending', 'fulfilled']).isRequired,
-  }),
-  inquiries: PropTypes.arrayOf(PropTypes.object).isRequired,
-  loadInquiries: PropTypes.func.isRequired,
-  clearInquiries: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-};
-
-Property.defaultProps = {
-  property: undefined,
-  error: undefined,
+  propertyId: PropTypes.string.isRequired,
 };
 
 export default Property;
