@@ -1,23 +1,10 @@
 import React, { useEffect } from 'react';
 import { PropTypes } from 'prop-types';
 
-import { connect } from 'react-redux';
 import { Box, Heading, Text, Anchor, Spinner, DataTable } from 'grommet';
 import { LinkPrevious } from 'grommet-icons';
 import { navigate } from '@reach/router';
 import { Error } from '../../components';
-import {
-  selectProperty,
-  selectInquiries,
-  selectInquiriesCount,
-  selectInquiriesError,
-  selectInquiriesLoading,
-  selectInquiriesUpdating,
-} from '../../selectors';
-import {
-  loadInquiries as loadInquiriesAction,
-  clearInquiries as clearInquiriesAction,
-} from '../../actions';
 import { POLL, POLL_INTERVAL } from '../../constants';
 
 function Property({
@@ -107,20 +94,6 @@ function Property({
   );
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  property: selectProperty(state, ownProps.propertyId),
-  inquiries: selectInquiries(state),
-  count: selectInquiriesCount(state),
-  error: selectInquiriesError(state),
-  isLoading: selectInquiriesLoading(state),
-  isUpdating: selectInquiriesUpdating(state),
-});
-
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  loadInquiries: () => dispatch(loadInquiriesAction(ownProps.propertyId)),
-  clearInquiries: () => dispatch(clearInquiriesAction()),
-});
-
 Property.propTypes = {
   property: PropTypes.shape({
     id: PropTypes.string.isRequired,
@@ -131,9 +104,6 @@ Property.propTypes = {
   loadInquiries: PropTypes.func.isRequired,
   clearInquiries: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  isUpdating: PropTypes.bool.isRequired,
-  error: PropTypes.shape({ message: PropTypes.string.isRequired }),
-  count: PropTypes.number.isRequired,
 };
 
 Property.defaultProps = {
@@ -141,4 +111,4 @@ Property.defaultProps = {
   error: undefined,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Property);
+export default Property;

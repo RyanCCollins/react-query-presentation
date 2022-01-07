@@ -1,13 +1,13 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import { Grommet, Box, grommet } from 'grommet';
 import { Router } from '@reach/router';
-import store from './store';
+import { QueryClientProvider } from 'react-query';
 import { PropertiesScreen, PropertyScreen } from './screens';
+import queryClient from './client';
 
 function App() {
   return (
-    <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
       <Grommet full theme={grommet} pad="medium">
         <Box style={{ maxWidth: '1800px' }} pad="medium">
           <Router>
@@ -16,7 +16,7 @@ function App() {
           </Router>
         </Box>
       </Grommet>
-    </Provider>
+    </QueryClientProvider>
   );
 }
 
