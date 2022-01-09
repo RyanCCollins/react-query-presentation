@@ -11,8 +11,8 @@ import {
   CardFooter,
   Grid,
 } from 'grommet';
-import { Map, StatusInfo, Favorite, Link as LinkIcon } from 'grommet-icons';
-import { Error } from '../../components';
+import { Favorite, Link as LinkIcon } from 'grommet-icons';
+import { Error, PropertyDetails } from '../../components';
 import { useLoadPropertiesQuery } from './queries';
 import { useColumnCount } from './hooks';
 
@@ -36,51 +36,34 @@ function Properties() {
   return (
     <Box>
       <Box direction="row" justify="between" align="center">
-        <Heading>Properties for Sale</Heading>
+        <Heading>My Properties</Heading>
         <Text>{properties.length} total</Text>
       </Box>
       <Grid
-        pad="small"
         columns={{
           count: columnCount,
           size: 'auto',
         }}
         gap="medium"
       >
-        {properties.map((item) => (
+        {properties.map((property) => (
           <Card
-            key={item.id}
+            key={property.id}
             elevation="medium"
             style={{ maxWidth: '550px' }}
-            onClick={() => navigate(`/properties/${item.id}`)}
+            onClick={() => navigate(`/properties/${property.id}`)}
           >
             <CardHeader height="290px">
               <Box
                 fit="cover"
                 height="290px"
                 width="100%"
-                background={`url(${item.coverImage})`}
-                a11yTitle={`${item.name} cover image`}
+                background={`url(${property.coverImage})`}
+                a11yTitle={`${property.name} cover image`}
               />
             </CardHeader>
             <CardBody pad="medium" height="medium">
-              <Heading level="2" size="small" margin="none">
-                {item.price}
-              </Heading>
-              <Box direction="row" gap="small" align="center">
-                <StatusInfo />
-                <Text size="large" margin="none">
-                  {item.details.bedrooms}br - {item.details.baths}ba
-                  {' - '}
-                  {item.details.sqft}sqft
-                </Text>
-              </Box>
-              <Box direction="row" gap="small" align="center">
-                <Map />
-                <Text size="large" margin="none">
-                  {item.name}
-                </Text>
-              </Box>
+              <PropertyDetails property={property} />
             </CardBody>
             <CardFooter background="light-1" pad="medium" justify="end">
               <LinkIcon />

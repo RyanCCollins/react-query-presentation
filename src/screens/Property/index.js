@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import { Box, Heading, Text, Anchor, Spinner, DataTable } from 'grommet';
 import { LinkPrevious } from 'grommet-icons';
 import { navigate } from '@reach/router';
-import { Error } from '../../components';
+import { Error, PropertyDetails } from '../../components';
 import { useLoadInquiriesQuery, useLoadPropertyQuery } from './queries';
 
 function Property({ propertyId }) {
   const {
     data: inquiries,
-    isLoading: isLoadingInquiries,
+    isFetching,
     error: errorInquiry,
   } = useLoadInquiriesQuery(propertyId);
   const {
@@ -38,52 +38,50 @@ function Property({ propertyId }) {
         icon={<LinkPrevious />}
         label="Back to Properties"
       />
-      <Heading>Property</Heading>
       {!property ? (
         <Text size="large">Property not found</Text>
       ) : (
         <>
+          <Heading>{property.name}</Heading>
           <Box gap="medium" pad="medium" direction="row">
-            <Text>{property.id}</Text>
-            <Text>{property.name}</Text>
-            <Text>{property.status}</Text>
+            <Box
+              background={`url(${property.coverImage})`}
+              fit="cover"
+              height="125px"
+              width="100%"
+              basis="250px"
+            />
+            <PropertyDetails property={property} />
           </Box>
           <Box direction="row" gap="small" align="center" justify="between">
             <Box direction="row" gap="small" align="center">
-              <Heading>Inquiries</Heading>
-              {isLoadingInquiries && <Spinner />}
+              <Heading level="2">Inquiries</Heading>
+              {isFetching && <Spinner />}
             </Box>
             {/* {count > 0 && <Text>Total Inquiries: {count}</Text>} */}
           </Box>
-          {isLoadingInquiries ? (
-            <Box pad="medium" fill align="center" justify="center">
-              <Spinner size="medium" />
-              <Text>Loading...</Text>
-            </Box>
-          ) : (
-            <DataTable
-              columns={[
-                {
-                  property: 'name',
-                  header: <Text>Name</Text>,
-                  primary: true,
-                },
-                {
-                  property: 'email',
-                  header: <Text>Email</Text>,
-                },
-                {
-                  property: 'phone',
-                  header: <Text>Phone</Text>,
-                },
-                {
-                  property: 'notes',
-                  header: <Text>Notes</Text>,
-                },
-              ]}
-              data={inquiries}
-            />
-          )}
+          <DataTable
+            columns={[
+              {
+                property: 'name',
+                header: <Text>Name</Text>,
+                primary: true,
+              },
+              {
+                property: 'email',
+                header: <Text>Email</Text>,
+              },
+              {
+                property: 'phone',
+                header: <Text>Phone</Text>,
+              },
+              {
+                property: 'notes',
+                header: <Text>Notes</Text>,
+              },
+            ]}
+            data={inquiries}
+          />
         </>
       )}
     </Box>
