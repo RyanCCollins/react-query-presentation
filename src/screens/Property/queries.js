@@ -17,4 +17,5 @@ export const useLoadInquiriesQuery = (propertyId) =>
   useQuery(['inquiries', propertyId], () => getInquiries(propertyId), {
     refetchInterval: POLL_INTERVAL,
     keepPreviousData: true,
+    select: (data) => data.sort((a, b) => b.id - a.id),
   });

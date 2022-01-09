@@ -8,15 +8,15 @@ import { useLoadInquiriesQuery, useLoadPropertyQuery } from './queries';
 
 function Property({ propertyId }) {
   const {
-    data: inquiries,
-    isFetching,
-    error: errorInquiry,
-  } = useLoadInquiriesQuery(propertyId);
-  const {
     data: property,
     isLoading: isLoadingProperty,
     error: errorProperty,
   } = useLoadPropertyQuery(propertyId);
+  const {
+    data: inquiries,
+    isFetching,
+    error: errorInquiry,
+  } = useLoadInquiriesQuery(propertyId);
 
   if (errorInquiry || errorProperty) {
     return <Error message={errorInquiry || errorProperty} />;
@@ -41,7 +41,7 @@ function Property({ propertyId }) {
       {!property ? (
         <Text size="large">Property not found</Text>
       ) : (
-        <>
+        <Box>
           <Heading>{property.name}</Heading>
           <Box gap="medium" pad="medium" direction="row">
             <Box
@@ -58,31 +58,31 @@ function Property({ propertyId }) {
               <Heading level="2">Inquiries</Heading>
               {isFetching && <Spinner />}
             </Box>
-            {/* {count > 0 && <Text>Total Inquiries: {count}</Text>} */}
+            {inquiries?.length > 0 && <Text>{inquiries.length} total</Text>}
           </Box>
           <DataTable
             columns={[
               {
                 property: 'name',
-                header: <Text>Name</Text>,
+                header: <Text weight="bold">Name</Text>,
                 primary: true,
               },
               {
                 property: 'email',
-                header: <Text>Email</Text>,
+                header: <Text weight="bold">Email</Text>,
               },
               {
                 property: 'phone',
-                header: <Text>Phone</Text>,
+                header: <Text weight="bold">Phone</Text>,
               },
               {
                 property: 'notes',
-                header: <Text>Notes</Text>,
+                header: <Text weight="bold">Notes</Text>,
               },
             ]}
             data={inquiries}
           />
-        </>
+        </Box>
       )}
     </Box>
   );
