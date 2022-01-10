@@ -1,24 +1,12 @@
 import React from 'react';
-import { Grommet, grommet } from 'grommet';
-import { deepMerge } from 'grommet/utils';
+import { Grommet } from 'grommet';
 import { Router } from '@reach/router';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { PropertiesScreen, PropertyScreen } from './screens';
 import queryClient from './client';
 import AppLayout from './AppLayout';
-
-const theme = deepMerge(grommet, {
-  global: {
-    colors: {
-      brand: {
-        main: '#10069f',
-        light: '#10069f',
-        dark: '#2a7de1',
-      },
-    },
-  },
-});
+import theme from './theme';
 
 function App() {
   return (
