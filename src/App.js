@@ -1,26 +1,23 @@
 import React from 'react';
 import { Grommet } from 'grommet';
 import { Router } from '@reach/router';
-import { QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import { PropertiesScreen, PropertyScreen } from './screens';
-import queryClient from './client';
 import AppLayout from './AppLayout';
 import theme from './theme';
+import { PropertiesProvider } from './contexts';
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <Grommet full theme={theme} pad="medium">
-        <AppLayout>
+    <Grommet full theme={theme} pad="medium">
+      <AppLayout>
+        <PropertiesProvider>
           <Router>
             <PropertiesScreen exact path="/" />
             <PropertyScreen path="/properties/:propertyId" />
           </Router>
-        </AppLayout>
-      </Grommet>
-    </QueryClientProvider>
+        </PropertiesProvider>
+      </AppLayout>
+    </Grommet>
   );
 }
 

@@ -1,28 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Heading, Text, Anchor, Spinner, DataTable } from 'grommet';
+import { Box, Heading, Text, Anchor, Spinner } from 'grommet';
 import { LinkPrevious } from 'grommet-icons';
 import { navigate } from '@reach/router';
 import { Error, PropertyDetails } from '../../components';
-import { useLoadInquiriesQuery, useLoadPropertyQuery } from './queries';
+import { InquiriesProvider, usePropertiesContext } from '../../contexts';
+import Inquiries from './Inquiries';
 
 function Property({ propertyId }) {
-  const {
-    data: property,
-    isLoading: isLoadingProperty,
-    error: errorProperty,
-  } = useLoadPropertyQuery(propertyId);
-  const {
-    data: inquiries,
-    isFetching,
-    error: errorInquiry,
-  } = useLoadInquiriesQuery(propertyId);
+  const { data: properties, loading, error } = usePropertiesContext(propertyId);
 
-  if (errorInquiry || errorProperty) {
-    return <Error message={errorInquiry || errorProperty} />;
+  if (error) {
+    return <Error message={error} />;
   }
 
-  if (isLoadingProperty) {
+  if (loading) {
     return (
       <Box pad="large" fill align="center" justify="center">
         <Spinner size="large" />
@@ -30,6 +22,8 @@ function Property({ propertyId }) {
       </Box>
     );
   }
+
+  const property = properties.find((p) => p.id === propertyId);
 
   return (
     <Box>
@@ -53,48 +47,9 @@ function Property({ propertyId }) {
             />
             <PropertyDetails property={property} />
           </Box>
-          <Box direction="row" gap="small" align="center" justify="between">
-            <Box direction="row" gap="small" align="center">
-              <Heading level="2">Inquiries</Heading>
-            </Box>
-            {inquiries?.length > 0 && <Text>{inquiries.length} total</Text>}
-          </Box>
-          <Box>
-            <DataTable
-              columns={[
-                {
-                  property: 'name',
-                  header: <Text weight="bold">Name</Text>,
-                  primary: true,
-                },
-                {
-                  property: 'email',
-                  header: <Text weight="bold">Email</Text>,
-                },
-                {
-                  property: 'phone',
-                  header: <Text weight="bold">Phone</Text>,
-                },
-                {
-                  property: 'notes',
-                  header: <Text weight="bold">Notes</Text>,
-                  render: (datum) => (
-                    <Box style={{ width: '100%', maxWidth: 700 }}>
-                      <Text style={{ whiteSpace: 'nowrap' }} truncate>
-                        {datum.notes}
-                      </Text>
-                    </Box>
-                  ),
-                },
-              ]}
-              data={inquiries}
-            />
-            {isFetching && (
-              <Box pad="medium" direction="row" justify="center">
-                <Spinner />
-              </Box>
-            )}
-          </Box>
+          <InquiriesProvider propertyId={propertyId}>
+            <Inquiries />
+          </InquiriesProvider>
         </Box>
       )}
     </Box>

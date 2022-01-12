@@ -13,18 +13,18 @@ import {
 } from 'grommet';
 import { Favorite, Link as LinkIcon } from 'grommet-icons';
 import { Error, PropertyDetails } from '../../components';
-import { useLoadPropertiesQuery } from './queries';
+import { usePropertiesContext } from '../../contexts';
 import { useColumnCount } from './hooks';
 
 function Properties() {
   const columnCount = useColumnCount();
-  const { data: properties, isLoading, error } = useLoadPropertiesQuery();
+  const { data: properties, loading, error } = usePropertiesContext();
 
   if (error) {
     return <Error message={error.message} />;
   }
 
-  if (isLoading) {
+  if (loading) {
     return (
       <Box pad="large" fill align="center" justify="center">
         <Spinner size="large" />
